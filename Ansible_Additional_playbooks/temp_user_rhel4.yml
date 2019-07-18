@@ -1,0 +1,28 @@
+##
+## Ansible playbook for creating a new security service accounts
+##
+#
+---
+- hosts: rhel4
+#  sudo: yes
+  gather_facts: False
+  tasks:
+# Create Security group for all Service accounts falls under security
+# - name: Create Security group with 222 GID
+#   raw: sudo /usr/sbin/groupadd -g 222 security
+# Grant Securty group root privilege
+  - name: Grant security group sudo root access without password
+    raw: sudo echo "%security ALL=(ALL) NOPASSWD{{':'}} ALL" >>/etc/sudoers
+#Validate sudoers file 
+  - name: Validate sudoers file 
+    raw: sudo /usr/sbin/visudo -c -f /etc/sudoers
+# Create Security service accounts here
+  - name: Create Security Service Account 
+    raw: sudo /usr/sbin/useradd -u 222 -c "Local Security account" -p \$6\$gRG0VYsrwh5QBP6l\$Zy8x.u5l4WUOXD5gXg4HQ54aysCx0hwP40SxKzpeRzzdzYWNchtvKbFfYOMFP6oYrTt8CL7EponMiHYZmCR5Z. -g 222 -f -1 -m -d /home/svc_sec svc_sec
+# Create Vulnerability service accounts here
+  - name: Create Vulnerability Manager Service Accont 
+    raw: sudo /usr/sbin/useradd -u 223 -c "Vulnerability Manager" -p \$6\$cQxN0kE/Z8fyIdqF\$DDBEHwlNWefYQja/HpcTQTI7XefHeRqCR4/Ql.IDzP0yYjbj2JQ3dt4cLNDDW1nu4naVf7t5nH66sqxIh5jNG0 -g 222 -f -1 -m -d /home/svc_vuln svc_vuln
+# Create PAM account Manager service account here 
+  - name: create PAM account Manager service account
+    raw: sudo /usr/sbin/useradd -u 224 -c "PAM Account manager" -p \$6\$8v.U6ymOhexSuts9\$tHRoqvvbn1LFPqc9nnBNL9cbXDuWAGrd5idsbRDqzhldg7Ru31zrf3vDFNOihd7EwoRAO0qaBlOPvCOOjNhD90 -g 222 -f -1 -m -d /home/svc_padm svc_padm
+

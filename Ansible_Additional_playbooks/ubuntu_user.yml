@@ -1,0 +1,72 @@
+##
+## Ansible playbook for creating a new security service accounts
+##
+#
+---
+- hosts: ubuntu
+  sudo: yes
+  tasks:
+# Create Security group for all Service accounts falls under security
+  - name: Create Security group with 222 GID
+    group:
+     name: security
+     gid: 222
+     state: present
+# Grant Securty group root privilege
+#  - name: Grant security group sudo root access without password
+#    lineinfile:
+#     dest: /etc/sudoers
+#     state: present
+#     regexp: '^%security'
+#     line: '%security ALL=(ALL) NOPASSWD: ALL'
+#     validate: 'visudo -cf %s'
+#
+#   Copy Security Sudoers file to /etc/sudoers.d remote directory
+  - template: 
+      src: /home/xgky1/inv/sudoers_security
+      dest: /etc/sudoers.d
+      owner: root
+      group: root
+      mode: 0440
+      validate: 'visudo -cf %s'
+# Create Security service accounts here
+  - name: Create Security Service Account 
+    user:
+     name: svc_sec
+     uid: 222
+     comment: Local Security account
+     expires: -1
+     password: '$6$gRG0VYsrwh5QBP6l$Zy8x.u5l4WUOXD5gXg4HQ54aysCx0hwP40SxKzpeRzzdzYWNchtvKbFfYOMFP6oYrTt8CL7EponMiHYZmCR5Z.'
+     group: security
+     state: present
+     shell: /bin/bash       # Defaults to /bin/bash
+     system: no             # Defaults to no
+     createhome: yes        # Defaults to yes
+     home: /home/svc_sec  # Defaults to /home/<username>
+# Create Vulnerability service accounts here
+  - name: Create Vulnerability Manager Service Accont 
+    user:
+     name: svc_vuln
+     uid: 223
+     comment: Vulnerability Manager
+     expires: -1
+     password: '$6$cQxN0kE/Z8fyIdqF$DDBEHwlNWefYQja/HpcTQTI7XefHeRqCR4/Ql.IDzP0yYjbj2JQ3dt4cLNDDW1nu4naVf7t5nH66sqxIh5jNG0'
+     group: security
+     state: present
+     shell: /bin/bash
+     system: no
+     createhome: yes
+     home: /home/svc_vuln
+# Create PAM account Manager service account here 
+  - name: create PAM account Manager service account
+    user:
+     name: svc_padm
+     uid: 224
+     comment: PAM Account manager
+     expires: -1
+     password: '$6$8v.U6ymOhexSuts9$tHRoqvvbn1LFPqc9nnBNL9cbXDuWAGrd5idsbRDqzhldg7Ru31zrf3vDFNOihd7EwoRAO0qaBlOPvCOOjNhD90'
+     group: security
+     state: present
+     createhome: yes
+     home: /home/svc_padm
+

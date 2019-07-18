@@ -1,0 +1,4 @@
+### SOS Report Colletor - Created by Gnanaprakasam K ###
+---
+- hosts: all
+  gather_facts: false

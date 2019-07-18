@@ -1,0 +1,12 @@
+##
+## Ansible playbook for creating a new security service accounts
+##
+#
+---
+- hosts: rhel5
+  sudo: yes
+  gather_facts: False
+  tasks:
+#install RPM's using local copy
+  - name: Install Python26 rpm's for RHEL5
+    raw: sudo rpm -ivh /var/tmp/python26-2.6.8-2.el5.x86_64.rpm /var/tmp/python26-libs-2.6.8-2.el5.x86_64.rpm /var/tmp/libffi-3.0.5-1.el5.x86_64.rpm

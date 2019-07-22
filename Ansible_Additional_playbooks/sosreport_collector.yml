@@ -1,6 +1,6 @@
 ### SOS Report Colletor - Created by Gnanaprakasam K ###
 ---
-- hosts: all
+- hosts: clnwkt2
 # vars file for sosreport
   vars:
   sosreport_packages: sos
@@ -10,7 +10,7 @@
     "7": "sosreport-*-{{ ansible_date_time.date }}-*.tar.xz"
   sosreport_patterns: "{{ _sosreport_patterns[ansible_distribution_major_version] }}"
   gather_facts: false
-  sudo: yes
+  become_method: sudo
   tasks:
 # tasks file for sosreport
 - name: test veriables and environment

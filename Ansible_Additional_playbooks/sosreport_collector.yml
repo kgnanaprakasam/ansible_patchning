@@ -9,6 +9,8 @@
     "6": "sosreport-*-{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}*.tar.xz"
     "7": "sosreport-*-{{ ansible_date_time.date }}-*.tar.xz"
   sosreport_patterns: "{{ _sosreport_patterns[ansible_distribution_major_version] }}"
+  sosreport_remote_location: /var/tmp
+  sosreport_local_location: /var/sosreports
   gather_facts: false
   become_method: sudo
   tasks:

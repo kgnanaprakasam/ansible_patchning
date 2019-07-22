@@ -30,11 +30,12 @@
      patterns: "{{ sosreport_patterns }}"
      register: sosreport_find_sosreports
   - name: run sosreport
-    command: "{{ sosreport_command }}"
-     tags:
-     - skip_ansible_lint
-     when:
-      - sosreport_find_sosreports.matched | int == 0
+    raw: sosreport --batch --tmp-dir={{ sosreport_remote_location }}
+#    command: "{{ sosreport_command }}"
+#     tags:
+#     - skip_ansible_lint
+#     when:
+#      - sosreport_find_sosreports.matched | int == 0
   - name: create local directory
     file:
      path: "{{ sosreport_local_location }}"

@@ -1,4 +1,63 @@
 ### SOS Report Colletor - Created by Gnanaprakasam K ###
 ---
 - hosts: all
+# vars file for sosreport
+  vars:
+  sosreport_packages: sos
+  sosreport_command: sosreport --batch --tmp-dir={{ sosreport_remote_location }}
+  _sosreport_patterns:
+    "6": "sosreport-*-{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}*.tar.xz"
+    "7": "sosreport-*-{{ ansible_date_time.date }}-*.tar.xz"
+  sosreport_patterns: "{{ _sosreport_patterns[ansible_distribution_major_version] }}"
   gather_facts: false
+  sudo: yes
+  tasks:
+# tasks file for sosreport
+- name: test veriables and environment
+  assert:
+    that:
+      - sosreport_remote_location is defined
+      - sosreport_local_location is defined
+- name: create remote directory
+  file:
+    path: "{{ sosreport_remote_location }}"
+    state: directory
+- name: find sosreports
+  find:
+    paths: "{{ sosreport_remote_location }}"
+    patterns: "{{ sosreport_patterns }}"
+  register: sosreport_find_sosreports
+
+- name: run sosreport
+  command: "{{ sosreport_command }}"
+  tags:
+    - skip_ansible_lint
+  when:
+    - sosreport_find_sosreports.matched | int == 0
+
+- name: create local directory
+  file:
+    path: "{{ sosreport_local_location }}"
+    state: directory
+  delegate_to: localhost
+  run_once: yes
+  become: no
+
+- name: find sosreports
+  find:
+    paths: "{{ sosreport_remote_location }}"
+    patterns: "{{ sosreport_patterns }}"
+  register: sosreport_find_sosreport
+
+- name: fetch sosreports
+  fetch:
+    src: "{{ item.path }}"
+    dest: "{{ sosreport_local_location }}/"
+    flat: yes
+  with_items:
+    - "{{ sosreport_find_sosreport.files }}"
+  when:
+    - sosreport_find_sosreport is defined
+    - sosreport_find_sosreport.files is defined
+  loop_control:
+    label: "{{ item.path | basename }}"

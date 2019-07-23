@@ -9,10 +9,14 @@
     "6": "sosreport-*-{{ ansible_date_time.year }}{{ ansible_date_time.month }}{{ ansible_date_time.day }}*.tar.xz"
     "7": "sosreport-*-{{ ansible_date_time.date }}-*.tar.xz"
   sosreport_patterns: "{{ _sosreport_patterns[ansible_distribution_major_version] }}"
+<<<<<<< HEAD
 # defaults file for sosreport
 # Where to store the sosreport on the managed node.
   sosreport_remote_location: /var/tmp
 # Where to store the sosreport(s) on the controller.
+=======
+  sosreport_remote_location: /var/tmp
+>>>>>>> 5895cdc688c299d5bde6a95323caf706a3752b07
   sosreport_local_location: /var/sosreports
   gather_facts: false
   become_method: sudo
@@ -33,11 +37,12 @@
      patterns: "{{ sosreport_patterns }}"
      register: sosreport_find_sosreports
   - name: run sosreport
-    command: "{{ sosreport_command }}"
-     tags:
-     - skip_ansible_lint
-     when:
-      - sosreport_find_sosreports.matched | int == 0
+    raw: sosreport --batch --tmp-dir={{ sosreport_remote_location }}
+#    command: "{{ sosreport_command }}"
+#     tags:
+#     - skip_ansible_lint
+#     when:
+#      - sosreport_find_sosreports.matched | int == 0
   - name: create local directory
     file:
      path: "{{ sosreport_local_location }}"

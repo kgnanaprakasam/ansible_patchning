@@ -1,3 +1,11 @@
 {
-    "git.autofetch": true
+    "git.autofetch": true,
+    "ansible.fileCopyConfig": [
+        {
+            "server": "ncdlsatisp0010",
+            "sourcePath": "c:\\Gnanaprakasam\\Patching Automation\\ansible_patchning/",
+            "targetPath": "ansible_patchning/",
+            "copyOnSave": true
+        }
+    ]
 }
